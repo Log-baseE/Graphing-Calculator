@@ -1,0 +1,12 @@
+.lower-menu .button {
+    -fx-background-color: rgb(42,56,90);
+    -fx-border-color: rgb(34,42,53);
+    -fx-border-radius: 5px;
+    -fx-height: 50px;
+}
+
+.lower-menu .button:hover{
+    -fx-background-color: rgb(34,42,53);
+}
+
+

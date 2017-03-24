@@ -1,0 +1,19 @@
+#equation-text-field{
+    -fx-background-radius: 5 0 0 5;
+}
+#delete-button{
+    -fx-background-radius: 0 5 5 0;
+    -fx-background-color: rgb(87,59,68);
+}
+#color-picker{
+    -fx-background-radius:0;
+    -fx-background-color: rgb(57,66,97);
+    -fx-border-color: white;
+    -fx-border-style: solid;
+    -fx-border-width: 0 1 0 0;
+}
+.gridPane{
+    -fx-border-color: rgb(200,200,200);
+    -fx-border-style: solid;
+    -fx-border-width: 0 0 1 0;
+}
