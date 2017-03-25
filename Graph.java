@@ -14,8 +14,11 @@ public class Graph implements Serializable{
     public void addEquation(Equation equation){
         equationArrayList.add(equation);
     }
+    public void addEquation(Equation.Type type, String equation, Color color){
+        equationArrayList.add(new Equation(type, equation, color));
+    }
     public void addEquation(String equation, Color color){
-        equationArrayList.add(new Equation(equation, color));
+        addEquation(Equation.Type.NORMAL, equation, color);
     }
     public void addEquation(String equation){
         addEquation(equation, Color.BLACK);
@@ -29,6 +32,9 @@ public class Graph implements Serializable{
     }
     public void setColorAt(int index, Color color){
         equationArrayList.get(index).setLineColor(color);
+    }
+    public void setTypeAt(int index, Equation.Type type){
+        equationArrayList.get(index).setType(type);
     }
 
     public ArrayList<Equation> getEquationArrayList(){
