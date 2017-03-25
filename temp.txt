@@ -1,0 +1,70 @@
+@FXML
+    public void initialize(){
+        parent = (VBox) this.getParent();
+    }
+
+    EquationPane(){
+        equationTextField = new TextField();
+
+        Random rand = new Random();
+        lineColorPicker = new ColorPicker(Color.color(rand.nextDouble(), rand.nextDouble(), rand.nextDouble()));
+        lineColorPicker.setPrefWidth(50);
+        lineColorPicker.setStyle("-fx-background-radius:0");
+
+        deleteEquationButton = new Button("×");
+
+        latexLabel = new Label("LaTeX Representation:");
+        latexLabel.setVisible(false);
+
+        latexRepresent = new ImageView();
+        latexRepresent.setVisible(false);
+
+        errorLabel = new Label("Invalid expression");
+        errorLabel.setVisible(false);
+        errorLabel.setTextFill(Color.rgb(150,0,0));
+
+        resultView = new WebView();
+        resultEngine = resultView.getEngine();
+        resultView.setVisible(false);
+
+//        resultLabel = new Label();
+//        resultLabel.getChildrenUnmodifiable().add(resultView);
+    }
+    void initialize(){
+        parent = (VBox)this.getParent();
+
+        equationTextField.setPromptText("Enter equation, e.g. x+3");
+        equationTextField.setPrefHeight(lineColorPicker.getPrefHeight());
+        equationTextField.setStyle("-fx-background-radius: 5 0 0 5");
+        equationTextField.addEventFilter(KeyEvent.KEY_RELEASED, e->{
+            if(e.getCode()!= KeyCode.ENTER) resultView.setVisible(false);
+            int index =parent.getChildren().indexOf(this);
+            mainProgram.getPlot().getGraph().setEquationAt(equationTextField.getText(), index);
+            System.out.println(mainProgram.getPlot().getGraph().getEquationArrayList());
+        });
+        equationTextField.setOnAction(e->{
+            String input = equationTextField.getText();
+            Expression expr = new Expression(input);
+            String resultString = String.valueOf(expr.calculate());
+            if(!resultString.equals("NaN")) {
+                resultString = PrettyDouble.beautifyGenerateHTML(resultString);
+                resultEngine.loadContent(resultString);
+                resultView.setVisible(true);
+            }
+        });
+
+//        resultView.setPrefWidth(parent.getWidth());
+//        resultView.setPrefHeight(USE_COMPUTED_SIZE);
+
+        this.add(equationTextField, 0, 0);
+        this.add(lineColorPicker, 1, 0);
+        this.add(deleteEquationButton, 2, 0);
+        this.add(resultView, 0, 1, 3, 1);
+        this.add(errorLabel, 0, 2, 3, 1);
+        this.add(latexLabel, 0, 3, 3, 1);
+        this.add(latexRepresent, 0, 4, 3, 1);
+
+        this.setStyle("");
+        this.setVgap(10);
+        this.setWidth(parent.getWidth()-10);
+    }
