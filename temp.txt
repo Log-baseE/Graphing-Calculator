@@ -3,7 +3,7 @@
         parent = (VBox) this.getParent();
     }
 
-    EquationPane(){
+    EquationPaneController(){
         equationTextField = new TextField();
 
         Random rand = new Random();

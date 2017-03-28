@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
@@ -18,6 +19,7 @@
       <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-border-color: rgb(200,200,200); -fx-border-style: solid; -fx-border-width: 0 0 1 0;" stylesheets="@equationPane.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="228.6666259765625" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="50.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0" />
         </columnConstraints>
@@ -27,11 +29,13 @@
             <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="40.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <TextField id="equation-text-field" fx:id="equationTextField" onKeyReleased="#editEquation" promptText="Enter a mathematical expression" />
-            <ColorPicker id="color-picker" fx:id="lineColorPicker" onAction="#setColor" GridPane.columnIndex="1" />
-            <AnchorPane GridPane.columnIndex="2">
+            <ChoiceBox id="choiceBox" fx:id="choiceBox" prefWidth="150.0" GridPane.columnIndex="1" />
+            <ColorPicker id="color-picker" fx:id="lineColorPicker" onAction="#setColor" GridPane.columnIndex="2" />
+            <AnchorPane GridPane.columnIndex="3">
                <children>
                   <Button id="delete-button" fx:id="deleteEquationButton" mnemonicParsing="false" onAction="#deleteEquation" text="×" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                      <cursor>
@@ -39,10 +43,11 @@
                      </cursor></Button>
                </children>
             </AnchorPane>
-            <Label fx:id="latexLabel" text="LaTeX Representation:" GridPane.columnSpan="3" GridPane.rowIndex="3" />
-            <Label fx:id="errorLabel" text="Invalid expression!" textFill="#c80000" GridPane.columnSpan="3" GridPane.rowIndex="1" />
-            <ImageView fx:id="latexRepresent" fitHeight="150.0" fitWidth="230.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="3" GridPane.rowIndex="4" />
-            <WebView fx:id="resultView" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="3" GridPane.rowIndex="2" />
+            <Label fx:id="errorLabel" text="Invalid expression!" textFill="#c80000" GridPane.columnSpan="4" GridPane.rowIndex="1" />
+            <Label fx:id="latexLabel" text="LaTeX Representation:" GridPane.columnSpan="4" GridPane.rowIndex="2" />
+            <ImageView fx:id="latexRepresent" fitHeight="150.0" fitWidth="404.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="4" GridPane.rowIndex="3" />
+            <Label fx:id="resultLabel" text="Result:" GridPane.columnSpan="4" GridPane.rowIndex="4" />
+            <WebView fx:id="resultView" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="4" GridPane.rowIndex="5" />
          </children>
          <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
