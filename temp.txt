@@ -3,7 +3,7 @@
         parent = (VBox) this.getParent();
     }
 
-    EquationPane(){
+    controllers.EquationPaneController(){
         equationTextField = new TextField();
 
         Random rand = new Random();
@@ -47,7 +47,7 @@
             Expression expr = new Expression(input);
             String resultString = String.valueOf(expr.calculate());
             if(!resultString.equals("NaN")) {
-                resultString = PrettyDouble.beautifyGenerateHTML(resultString);
+                resultString = mechanisms.PrettyDouble.beautifyGenerateHTML(resultString);
                 resultEngine.loadContent(resultString);
                 resultView.setVisible(true);
             }

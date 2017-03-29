@@ -76,12 +76,12 @@
                                           </accelerator>
                                       </MenuItem>
                               <SeparatorMenuItem mnemonicParsing="false" />
-                                      <MenuItem mnemonicParsing="false" text="Integration">
+                                      <MenuItem mnemonicParsing="false" onAction="#integrate" text="Integration">
                                           <accelerator>
                                               <KeyCodeCombination alt="UP" code="I" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                                           </accelerator>
                                       </MenuItem>
-                                      <MenuItem mnemonicParsing="false" text="Derivatives">
+                                      <MenuItem mnemonicParsing="false" onAction="#derivative" text="Derivatives">
                                           <accelerator>
                                               <KeyCodeCombination alt="UP" code="D" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                                           </accelerator>
@@ -115,7 +115,7 @@
                                     <Font size="15.0" />
                                  </font>
                               </Button>
-                              <Button contentDisplay="CENTER" mnemonicParsing="false" prefHeight="50.0" style="-fx-padding: 10;" textAlignment="CENTER">
+                              <Button fx:id="integralButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#integrate" prefHeight="50.0" style="-fx-padding: 10;" textAlignment="CENTER">
                                  <graphic>
                                     <ImageView fitHeight="30.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -130,7 +130,7 @@
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
                               </Button>
-                              <Button contentDisplay="CENTER" mnemonicParsing="false" prefHeight="50.0" textAlignment="CENTER">
+                              <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#derivative" prefHeight="50.0" textAlignment="CENTER">
                                  <graphic>
                                     <ImageView fitHeight="30.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
