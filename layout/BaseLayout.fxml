@@ -81,7 +81,7 @@
                                               <KeyCodeCombination alt="UP" code="I" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                                           </accelerator>
                                       </MenuItem>
-                                      <MenuItem mnemonicParsing="false" text="Derivatives">
+                                      <MenuItem mnemonicParsing="false" onAction="#derivative" text="Derivatives">
                                           <accelerator>
                                               <KeyCodeCombination alt="UP" code="D" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                                           </accelerator>
@@ -130,7 +130,7 @@
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
                               </Button>
-                              <Button contentDisplay="CENTER" mnemonicParsing="false" prefHeight="50.0" textAlignment="CENTER">
+                              <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#derivative" prefHeight="50.0" textAlignment="CENTER">
                                  <graphic>
                                     <ImageView fitHeight="30.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                                        <image>

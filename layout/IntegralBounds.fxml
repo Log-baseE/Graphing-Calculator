@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -28,17 +29,23 @@
          <padding>
             <Insets left="5.0" right="5.0" />
          </padding></Label>
-      <TextField fx:id="lower" prefHeight="25.0" GridPane.columnIndex="1">
+      <TextField fx:id="lower" prefHeight="25.0" promptText="e.g. 5 or sin(pi/2)" GridPane.columnIndex="1">
          <padding>
             <Insets left="5.0" right="5.0" />
          </padding>
          <GridPane.margin>
             <Insets bottom="5.0" />
-         </GridPane.margin></TextField>
-      <TextField fx:id="upper" prefHeight="25.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         </GridPane.margin>
+         <tooltip>
+            <Tooltip text="Enter a number or an expression (e.g. 5 or sin(pi))" />
+         </tooltip></TextField>
+      <TextField fx:id="upper" prefHeight="25.0" promptText="e.g. 5 or sin(pi/2)" GridPane.columnIndex="1" GridPane.rowIndex="1">
          <padding>
             <Insets left="5.0" right="5.0" />
-         </padding></TextField>
+         </padding>
+         <tooltip>
+            <Tooltip text="Enter a number or an expression (e.g. 5 or sin(pi))" />
+         </tooltip></TextField>
    </children>
    <padding>
       <Insets bottom="5.0" top="5.0" />
