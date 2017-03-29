@@ -1,8 +1,0 @@
-.delete-equation-button{
-    -fx-background-color: rgb(87,59,68);
-    -fx-background-radius: 0 5 5 0;
-
-}
-.delete-equation-button:hover{
-    -fx-background-color: rgb(62,42,48);
-}
