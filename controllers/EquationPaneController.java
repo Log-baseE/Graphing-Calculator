@@ -13,7 +13,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import main.Equation;
+import plot.DerivativeEquation;
+import plot.NormalEquation;
+import plot.IntegralEquation;
 import main.Main;
 import mechanisms.Calculator;
 import mechanisms.PrettyDouble;
@@ -30,7 +32,7 @@ public class EquationPaneController extends AnchorPane implements Initializable 
     @FXML
     private TextField equationTextField;
     @FXML
-    private ChoiceBox<Equation.Type> choiceBox;
+    private ChoiceBox<NormalEquation.Type> choiceBox;
     @FXML
     private ColorPicker lineColorPicker;
     @FXML
@@ -48,34 +50,27 @@ public class EquationPaneController extends AnchorPane implements Initializable 
     @FXML
     private WebEngine resultEngine;
 
-    /**
-     * Integral/derivative components
-     */
+    /**Integral/derivative components*/
     private IntegralBoundsController integralBounds;
     private DerivativeController derivativePoint;
 
-    /**
-     * Parent components
-     */
+    /**Parent components*/
     @FXML
     private VBox parent = Main.getBaseController().equationPaneContainer;
 
-    /**
-     * Components
-     */
+    /**Components*/
     private GridPane gridPane;
     private ArrayList<ColumnConstraints> columns;
     private ArrayList<RowConstraints> rows;
-    private ObservableList<Equation.Type> typeChoices =
-            FXCollections.observableArrayList(Equation.Type.NORMAL, Equation.Type.INTEGRAL, Equation.Type.DERIVATIVE);
+    private ObservableList<NormalEquation.Type> typeChoices =
+            FXCollections.observableArrayList(NormalEquation.Type.NORMAL, NormalEquation.Type.INTEGRAL, NormalEquation.Type.DERIVATIVE);
 
-    /**
-     * Other attributes
-     */
+    /** Other attributes */
     private int index;
-    private Equation.Type choice;
+    private NormalEquation.Type choice;
+    private NormalEquation thisEquation;
 
-    public EquationPaneController(Equation.Type type) {
+    public EquationPaneController(NormalEquation.Type type) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/layout/EquationPane.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
@@ -102,7 +97,6 @@ public class EquationPaneController extends AnchorPane implements Initializable 
         lineColorPicker.setValue(new Color(red, green, blue, 1));
 
         resultEngine = resultView.getEngine();
-        System.out.println(resultEngine);
 
         errorLabel.setVisible(false);
         latexLabel.setVisible(false);
@@ -111,22 +105,119 @@ public class EquationPaneController extends AnchorPane implements Initializable 
         resultView.setVisible(false);
 
         integralBounds = new IntegralBoundsController();
-        derivativePoint = new DerivativeController();
+        integralBounds.lower.setOnAction(evt -> {
+//                    System.out.println("lower");
+            String lower = integralBounds.lower.getText();
+            String upper = integralBounds.upper.getText();
+            String equation = equationTextField.getText();
+            IntegralEquation oldEquation = (IntegralEquation) thisEquation;
+            thisEquation = new IntegralEquation(equation, lower, upper, lineColorPicker.getValue());
+            if (!lower.isEmpty() && !upper.isEmpty() && !equation.isEmpty()) {
+                resultEngine.loadContent(
+                        PrettyDouble.beautifyGenerateHTML(Calculator.integrate(equation, lower, upper))
+                );
+                resultLabel.setVisible(true);
+                resultView.setVisible(true);
+            } else {
+                resultLabel.setVisible(false);
+                resultView.setVisible(false);
+            }
+            Main.getBaseController().getPlot().drawCurve(oldEquation, thisEquation);
+            Main.getGraph().setEquationAt(index, thisEquation);
+        });
+        integralBounds.upper.setOnAction(evt -> {
+            String lower = integralBounds.getLower();
+            String upper = integralBounds.getUpper();
+            String equation = equationTextField.getText();
+            IntegralEquation oldEquation = (IntegralEquation) thisEquation;
+            thisEquation = new IntegralEquation(equation, lower, upper, lineColorPicker.getValue());
+            if (!lower.isEmpty() && !upper.isEmpty() && !equation.isEmpty()) {
+//                        System.out.println(Calculator.integrate(equation, lower, upper));
+                resultEngine.loadContent(
+                        PrettyDouble.beautifyGenerateHTML(Calculator.integrate(equation, lower, upper)));
+                resultLabel.setVisible(true);
+                resultView.setVisible(true);
+            } else {
+                resultLabel.setVisible(false);
+                resultView.setVisible(false);
+            }
+            Main.getBaseController().getPlot().drawCurve(oldEquation, thisEquation);
+            Main.getGraph().setEquationAt(index, thisEquation);
+        });
 
-        System.out.println(integralBounds.getChildren());
-        System.out.println(derivativePoint.getChildren());
+        derivativePoint = new DerivativeController();
+        derivativePoint.point.setOnAction(evt -> {
+            System.out.println("ACTION!");
+            String point = derivativePoint.getPoint();
+            String equation = equationTextField.getText();
+            DerivativeEquation oldEquation = (DerivativeEquation) thisEquation;
+            thisEquation = new DerivativeEquation(equation, point, lineColorPicker.getValue());
+            ((DerivativeEquation) thisEquation).setPoint(point);
+            if (!point.isEmpty() && !equation.isEmpty()) {
+                resultEngine.loadContent(
+                        PrettyDouble.beautifyGenerateHTML(Calculator.derivative(equation, point))
+                );
+                resultLabel.setVisible(true);
+                resultView.setVisible(true);
+            } else {
+                resultLabel.setVisible(false);
+                resultView.setVisible(false);
+            }
+            Main.getBaseController().getPlot().drawCurve(oldEquation, thisEquation);
+            Main.getGraph().setEquationAt(index, thisEquation);
+        });
+
+        if (type == NormalEquation.Type.INTEGRAL) {
+            if (!equationTextField.getText().isEmpty()) {
+                resultEngine.loadContent(
+                        PrettyDouble.beautifyGenerateHTML(Calculator.integrate(
+                                equationTextField.getText(),
+                                integralBounds.lower.getText(),
+                                integralBounds.upper.getText())));
+                resultLabel.setVisible(true);
+                resultView.setVisible(true);
+            }
+            gridPane.add(integralBounds, 0, 1, 4, 1);
+            gridPane.getChildren().remove(derivativePoint);
+            thisEquation = new IntegralEquation(
+                    equationTextField.getText(),
+                    integralBounds.lower.getText(),
+                    integralBounds.upper.getText(),
+                    lineColorPicker.getValue()
+            );
+        } else if (type == NormalEquation.Type.DERIVATIVE) {
+            if (!equationTextField.getText().isEmpty()) {
+                resultEngine.loadContent(
+                        PrettyDouble.beautifyGenerateHTML(Calculator.derivative(
+                                equationTextField.getText(),
+                                derivativePoint.point.getText()
+                        )));
+                resultLabel.setVisible(true);
+                resultView.setVisible(true);
+            }
+            gridPane.add(derivativePoint, 0, 1, 4, 1);
+            gridPane.getChildren().remove(integralBounds);
+            thisEquation = new DerivativeEquation(
+                    equationTextField.getText(),
+                    derivativePoint.point.getText(),
+                    lineColorPicker.getValue()
+            );
+        } else {
+            thisEquation = new NormalEquation("", lineColorPicker.getValue());
+        }
+        Main.getGraph().addEquation(thisEquation);
 
         choiceBox.setItems(typeChoices);
         choiceBox.setValue(type);
         choiceBox.setOnAction(e -> {
             choice = choiceBox.getValue();
-            Main.getPlot().getGraph().setTypeAt(index, choice);
-            if (choice == Equation.Type.INTEGRAL) {
+            if (choice == NormalEquation.Type.INTEGRAL) {
                 if (!equationTextField.getText().isEmpty()) {
-                    resultEngine.loadContent(Calculator.integrate(
+                    resultEngine.loadContent(
+                            PrettyDouble.beautifyGenerateHTML(Calculator.integrate(
                             equationTextField.getText(),
                             integralBounds.lower.getText(),
-                            integralBounds.upper.getText()));
+                            integralBounds.upper.getText())));
                     resultLabel.setVisible(true);
                     resultView.setVisible(true);
                 }
@@ -135,74 +226,92 @@ public class EquationPaneController extends AnchorPane implements Initializable 
                     String lower = integralBounds.lower.getText();
                     String upper = integralBounds.upper.getText();
                     String equation = equationTextField.getText();
+                    IntegralEquation oldEquation = (IntegralEquation) thisEquation;
+                    thisEquation = new IntegralEquation(equation, lower, upper, lineColorPicker.getValue());
                     if (!lower.isEmpty() && !upper.isEmpty() && !equation.isEmpty()) {
-                        resultEngine.loadContent(Calculator.integrate(equation, lower, upper));
+                        resultEngine.loadContent(
+                                PrettyDouble.beautifyGenerateHTML(Calculator.integrate(equation, lower, upper))
+                        );
                         resultLabel.setVisible(true);
                         resultView.setVisible(true);
                     } else {
                         resultLabel.setVisible(false);
                         resultView.setVisible(false);
                     }
+                    Main.getBaseController().getPlot().drawCurve(oldEquation, thisEquation);
+                    Main.getGraph().setEquationAt(index, thisEquation);
                 });
                 integralBounds.upper.setOnAction(evt -> {
-                    System.out.println("upper");
-                    String lower = integralBounds.lower.getText();
-                    String upper = integralBounds.upper.getText();
+                    String lower = integralBounds.getLower();
+                    String upper = integralBounds.getUpper();
                     String equation = equationTextField.getText();
+                    IntegralEquation oldEquation = (IntegralEquation) thisEquation;
+                    thisEquation = new IntegralEquation(equation, lower, upper, lineColorPicker.getValue());
                     if (!lower.isEmpty() && !upper.isEmpty() && !equation.isEmpty()) {
-                        System.out.println(Calculator.integrate(equation, lower, upper));
-                        resultEngine.loadContent(Calculator.integrate(equation, lower, upper));
+//                        System.out.println(Calculator.integrate(equation, lower, upper));
+                        resultEngine.loadContent(
+                                PrettyDouble.beautifyGenerateHTML(Calculator.integrate(equation, lower, upper)));
                         resultLabel.setVisible(true);
                         resultView.setVisible(true);
                     } else {
                         resultLabel.setVisible(false);
                         resultView.setVisible(false);
                     }
+                    Main.getBaseController().getPlot().drawCurve(oldEquation, thisEquation);
+                    Main.getGraph().setEquationAt(index, thisEquation);
                 });
                 gridPane.add(integralBounds, 0, 1, 4, 1);
                 gridPane.getChildren().remove(derivativePoint);
-            } else if (choice == Equation.Type.DERIVATIVE) {
+                NormalEquation oldEquation = thisEquation;
+                thisEquation = new IntegralEquation(
+                        equationTextField.getText(),
+                        integralBounds.lower.getText(),
+                        integralBounds.upper.getText(),
+                        lineColorPicker.getValue()
+                );
+                Main.getBaseController().getPlot().drawCurve(oldEquation, thisEquation);
+                Main.getGraph().setEquationAt(index, thisEquation);
+            } else if (choice == NormalEquation.Type.DERIVATIVE) {
                 if (!equationTextField.getText().isEmpty()) {
-                    resultEngine.loadContent(Calculator.derivative(
+                    resultEngine.loadContent(
+                            PrettyDouble.beautifyGenerateHTML(Calculator.derivative(
                             equationTextField.getText(),
                             derivativePoint.point.getText()
-                    ));
+                            )));
                     resultLabel.setVisible(true);
                     resultView.setVisible(true);
                 }
-                derivativePoint.point.setOnAction(evt -> {
-                    String point = derivativePoint.point.getText();
-                    String equation = equationTextField.getText();
-                    if (!point.isEmpty() && !equation.isEmpty()) {
-                        resultEngine.loadContent(Calculator.derivative(equation, point));
-                        resultLabel.setVisible(true);
-                        resultView.setVisible(true);
-                    } else {
-                        resultLabel.setVisible(false);
-                        resultView.setVisible(false);
-                    }
-                });
                 gridPane.add(derivativePoint, 0, 1, 4, 1);
                 gridPane.getChildren().remove(integralBounds);
+                NormalEquation oldEquation = thisEquation;
+                thisEquation = new DerivativeEquation(
+                        equationTextField.getText(),
+                        derivativePoint.point.getText(),
+                        lineColorPicker.getValue()
+                );
+                Main.getBaseController().getPlot().drawCurve(oldEquation, thisEquation);
+                Main.getGraph().setEquationAt(index, thisEquation);
             } else {
                 gridPane.getChildren().removeAll(derivativePoint, integralBounds);
+                NormalEquation oldEquation = thisEquation;
+                thisEquation = new NormalEquation(equationTextField.getText(), lineColorPicker.getValue());
+                Main.getBaseController().getPlot().drawCurve(oldEquation, thisEquation);
+                Main.getGraph().setEquationAt(index, thisEquation);
             }
         });
-
-        Main.getPlot().getGraph().addEquation(type, "", lineColorPicker.getValue());
-        System.out.println(Main.getPlot().getGraph().getEquationArrayList());
     }
 
     public EquationPaneController() {
-        this(Equation.Type.NORMAL);
+        this(NormalEquation.Type.NORMAL);
     }
 
     @FXML
     public void deleteEquation() {
         Main.refresh();
         parent.getChildren().remove(index);
-        Main.getPlot().getGraph().deleteAt(index);
-        System.out.println(Main.getPlot().getGraph().getEquationArrayList());
+        Main.getBaseController().getPlot().removeGroup(thisEquation);
+        Main.getGraph().getEquationArrayList().remove(thisEquation);
+//        System.out.println(Main.getGraph().getEquationArrayList());
     }
 
     @FXML
@@ -224,6 +333,9 @@ public class EquationPaneController extends AnchorPane implements Initializable 
                         resultLabel.setVisible(true);
                         resultView.setVisible(true);
                     } else {
+                        NormalEquation oldEquation = thisEquation;
+                        thisEquation = new NormalEquation(textInput, lineColorPicker.getValue());
+                        Main.getBaseController().getPlot().drawCurve(oldEquation, thisEquation);
                         resultLabel.setVisible(false);
                         resultView.setVisible(false);
                     }
@@ -231,17 +343,22 @@ public class EquationPaneController extends AnchorPane implements Initializable 
                 break;
             case INTEGRAL:
                 if (event.getCode() == KeyCode.ENTER) {
-                    String lower = integralBounds.lower.getText();
-                    String upper = integralBounds.upper.getText();
+                    String lower = integralBounds.getLower();
+                    String upper = integralBounds.getUpper();
                     String equation = equationTextField.getText();
                     if (!lower.isEmpty() && !upper.isEmpty() && !equation.isEmpty()) {
-                        resultEngine.loadContent(Calculator.integrate(equation, lower, upper));
+                        resultEngine.loadContent(
+                                PrettyDouble.beautifyGenerateHTML(Calculator.integrate(equation, lower, upper))
+                        );
                         resultLabel.setVisible(true);
                         resultView.setVisible(true);
                     } else {
                         resultLabel.setVisible(false);
                         resultView.setVisible(false);
                     }
+                    NormalEquation oldEquation = thisEquation;
+                    thisEquation = new IntegralEquation(equation, lower, upper, lineColorPicker.getValue());
+                    Main.getBaseController().getPlot().drawCurve(oldEquation, thisEquation);
                 }
                 break;
             case DERIVATIVE:
@@ -249,25 +366,32 @@ public class EquationPaneController extends AnchorPane implements Initializable 
                     String point = derivativePoint.point.getText();
                     String equation = equationTextField.getText();
                     if (!point.isEmpty() && !equation.isEmpty()) {
-                        resultEngine.loadContent(Calculator.derivative(equation, point));
+                        resultEngine.loadContent(
+                                PrettyDouble.beautifyGenerateHTML(Calculator.derivative(equation, point))
+                        );
                         resultLabel.setVisible(true);
                         resultView.setVisible(true);
                     } else {
                         resultLabel.setVisible(false);
                         resultView.setVisible(false);
                     }
+                    NormalEquation oldEquation = thisEquation;
+                    thisEquation = new DerivativeEquation(equation, point, lineColorPicker.getValue());
+                    Main.getBaseController().getPlot().drawCurve(oldEquation, thisEquation);
                 }
                 break;
         }
-
-        Main.getPlot().getGraph().setEquationAt(index, equationTextField.getText());
-        System.out.println(Main.getPlot().getGraph().getEquationArrayList());
+        Main.getGraph().setEquationAt(index, thisEquation);
+//        System.out.println(Main.getGraph().getEquationArrayList());
     }
 
     @FXML
     public void setColor() {
-        Main.getPlot().getGraph().setColorAt(index, lineColorPicker.getValue());
-        System.out.println(Main.getPlot().getGraph().getEquationArrayList());
+        NormalEquation oldEquation = thisEquation;
+        thisEquation.setLineColor(lineColorPicker.getValue());
+        Main.getGraph().setColorAt(index, lineColorPicker.getValue());
+        Main.getBaseController().getPlot().drawCurve(oldEquation, thisEquation);
+//        System.out.println(Main.getGraph().getEquationArrayList());
     }
 
     public Color getColor() {
@@ -281,5 +405,9 @@ public class EquationPaneController extends AnchorPane implements Initializable 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+    }
+
+    public TextField getEquationTextField(){
+        return equationTextField;
     }
 }

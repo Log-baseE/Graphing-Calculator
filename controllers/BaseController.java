@@ -5,7 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import main.Equation;
+import plot.NormalEquation;
+import plot.Plot;
 
 import java.io.IOException;
 import java.net.URL;
@@ -15,17 +16,6 @@ import java.util.ResourceBundle;
  * Created by Nicky on 3/15/2017.
  */
 public class BaseController extends AnchorPane implements Initializable{
-
-    public BaseController(){
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/layout/BaseLayout.fxml"));
-        fxmlLoader.setRoot(this);
-        fxmlLoader.setController(this);
-        try {
-            fxmlLoader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     /**lower menu*/
     @FXML
@@ -45,6 +35,19 @@ public class BaseController extends AnchorPane implements Initializable{
     @FXML
     public SplitPane splitPane;
 
+    private Plot plot;
+
+    public BaseController(){
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/layout/BaseLayout.fxml"));
+        fxmlLoader.setRoot(this);
+        fxmlLoader.setController(this);
+        try {
+            fxmlLoader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @FXML
     public void createNewGraph(){
 //        System.out.println("create");
@@ -56,18 +59,21 @@ public class BaseController extends AnchorPane implements Initializable{
         equationPaneContainer.setPrefWidth(leftPane.getWidth());
         EquationPaneController ep = new EquationPaneController();
         equationPaneContainer.getChildren().add(ep);
+        ep.getEquationTextField().requestFocus();
     }
     @FXML
     public void integrate(){
         equationPaneContainer.setPrefWidth(leftPane.getWidth());
-        EquationPaneController ep = new EquationPaneController(Equation.Type.INTEGRAL);
+        EquationPaneController ep = new EquationPaneController(NormalEquation.Type.INTEGRAL);
         equationPaneContainer.getChildren().add(ep);
+        ep.getEquationTextField().requestFocus();
     }
     @FXML
     public void derivative(){
         equationPaneContainer.setPrefWidth(leftPane.getWidth());
-        EquationPaneController ep = new EquationPaneController(Equation.Type.DERIVATIVE);
+        EquationPaneController ep = new EquationPaneController(NormalEquation.Type.DERIVATIVE);
         equationPaneContainer.getChildren().add(ep);
+        ep.getEquationTextField().requestFocus();
     }
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -75,6 +81,15 @@ public class BaseController extends AnchorPane implements Initializable{
         rightPane.maxWidthProperty().bind(splitPane.widthProperty().multiply(0.65));
         leftPane.prefWidthProperty().bind(splitPane.widthProperty().multiply(0.35));
         rightPane.prefWidthProperty().bind(splitPane.widthProperty().multiply(0.65));
+    }
+
+    public void addPlot(){
+        plot = new Plot(rightPane.getWidth(), rightPane.getHeight());
+        rightPane.getChildren().add(plot);
+    }
+
+    public Plot getPlot(){
+        return plot;
     }
 
 }
