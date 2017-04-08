@@ -7,14 +7,14 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import plot.Plot;
 
 public class Main extends Application{
     public Stage mainWindow;
-    private static Plot thisPlot;
+    private static Graph graph;
     private static BaseController baseController;
 
     public static void main(String[] args){
-        thisPlot = new Plot();
         launch(args);
     }
 
@@ -30,11 +30,13 @@ public class Main extends Application{
         mainWindow.setTitle("Untitled Graph");
         mainWindow.setMaximized(true);
         mainWindow.show();
+        graph = new Graph();
         baseController.addEquation();
+        baseController.addPlot();
     }
 
     public static BaseController getBaseController(){return baseController;}
-    public static Plot getPlot(){return thisPlot;}
+    public static Graph getGraph(){return graph;}
     public static void refresh(){
         for(Node node : baseController.equationPaneContainer.getChildren()){
             EquationPaneController epc = (EquationPaneController) node;
