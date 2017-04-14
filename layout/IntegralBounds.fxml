@@ -16,6 +16,7 @@
   <rowConstraints>
     <RowConstraints vgrow="SOMETIMES" />
     <RowConstraints vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
       <Label alignment="CENTER_RIGHT" text="Lower Bound">
@@ -46,6 +47,7 @@
          <tooltip>
             <Tooltip text="Enter a number or an expression (e.g. 5 or sin(pi))" />
          </tooltip></TextField>
+      <Label fx:id="errorLabel" text="Invalid!" textFill="#c80000" GridPane.columnSpan="2" GridPane.rowIndex="2" />
    </children>
    <padding>
       <Insets bottom="5.0" top="5.0" />

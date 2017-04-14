@@ -35,17 +35,17 @@
                                               <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                                           </accelerator>
                                       </MenuItem>
-                                      <MenuItem mnemonicParsing="false" text="Open">
+                                      <MenuItem mnemonicParsing="false" onAction="#openGraph" text="Open">
                                           <accelerator>
                                               <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                                           </accelerator>
                                       </MenuItem>
-                                      <MenuItem mnemonicParsing="false" text="Save">
+                                      <MenuItem fx:id="saveGraphMenu" mnemonicParsing="false" onAction="#saveGraph" text="Save">
                                           <accelerator>
                                               <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                                           </accelerator>
                                       </MenuItem>
-                                      <MenuItem mnemonicParsing="false" text="Save As...">
+                                      <MenuItem fx:id="saveAsMenu" mnemonicParsing="false" onAction="#saveAsGraph" text="Save As...">
                                           <accelerator>
                                               <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
                                           </accelerator>
@@ -149,7 +149,7 @@
                         </HBox>
                      </left>
                      <right>
-                        <Label prefHeight="50.0" text="Untitled Graph" textFill="WHITE" BorderPane.alignment="CENTER">
+                        <Label fx:id="baseTitle" prefHeight="50.0" text="Untitled Graph" textFill="WHITE" BorderPane.alignment="CENTER">
                            <font>
                               <Font size="20.0" />
                            </font>

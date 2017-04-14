@@ -28,11 +28,12 @@
           <RowConstraints vgrow="SOMETIMES" />
             <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="40.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <TextField id="equation-text-field" fx:id="equationTextField" onKeyReleased="#editEquation" promptText="Enter a mathematical expression" />
+            <TextField id="normalEquation-text-field" fx:id="equationTextField" onKeyReleased="#editEquation" promptText="f(x) = " />
             <ChoiceBox id="choiceBox" fx:id="choiceBox" prefWidth="150.0" GridPane.columnIndex="1" />
             <ColorPicker id="color-picker" fx:id="lineColorPicker" onAction="#setColor" GridPane.columnIndex="2" />
             <AnchorPane GridPane.columnIndex="3">
@@ -45,9 +46,15 @@
             </AnchorPane>
             <Label fx:id="errorLabel" text="Invalid expression!" textFill="#c80000" GridPane.columnSpan="4" GridPane.rowIndex="1" />
             <Label fx:id="latexLabel" text="LaTeX Representation:" GridPane.columnSpan="4" GridPane.rowIndex="2" />
-            <ImageView fx:id="latexRepresent" fitHeight="150.0" fitWidth="404.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="4" GridPane.rowIndex="3" />
-            <Label fx:id="resultLabel" text="Result:" GridPane.columnSpan="4" GridPane.rowIndex="4" />
-            <WebView fx:id="resultView" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="4" GridPane.rowIndex="5" />
+            <ImageView fx:id="latexRepresent" fitHeight="150.0" fitWidth="404.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="4" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets bottom="10.0" />
+               </GridPane.margin></ImageView>
+            <Label fx:id="resultLabel" text="Result:" GridPane.columnSpan="4" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin></Label>
+            <WebView fx:id="resultView" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="4" GridPane.rowIndex="6" />
          </children>
          <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
