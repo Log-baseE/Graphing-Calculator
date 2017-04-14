@@ -2,6 +2,8 @@ package controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
@@ -13,6 +15,8 @@ import java.io.IOException;
 public class IntegralBoundsController extends GridPane{
     @FXML TextField lower;
     @FXML TextField upper;
+    @FXML
+    Label errorLabel;
 
     public IntegralBoundsController(){
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/layout/IntegralBounds.fxml"));
@@ -20,8 +24,13 @@ public class IntegralBoundsController extends GridPane{
         fxmlLoader.setController(this);
         try {
             fxmlLoader.load();
+//            System.out.println("int load successful!");
         } catch (IOException e) {
-            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error loading file!");
+            alert.setContentText("Error loading IntegralBounds.fxml");
+            alert.showAndWait();
         }
         lower.setText("0");
         upper.setText("1");

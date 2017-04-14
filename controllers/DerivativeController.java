@@ -2,17 +2,22 @@ package controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 
 /**
  * Created by Nicky on 3/28/2017.
  */
-public class DerivativeController extends HBox{
+public class DerivativeController extends VBox{
     @FXML
     TextField point;
+    @FXML
+    Label errorLabel;
 
     public DerivativeController(){
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/layout/DerivativePoint.fxml"));
@@ -20,8 +25,13 @@ public class DerivativeController extends HBox{
         fxmlLoader.setController(this);
         try {
             fxmlLoader.load();
+//            System.out.println("der load successful!");
         } catch (IOException e) {
-            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error loading file!");
+            alert.setContentText("Error loading DerivativePoint.fxml");
+            alert.showAndWait();
         }
         point.setText("0");
     }
