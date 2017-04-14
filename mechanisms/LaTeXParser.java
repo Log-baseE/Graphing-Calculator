@@ -329,7 +329,7 @@ public class LaTeXParser {
                 else if (token == Operators.DIVIDE) {
                     return "\\frac{" + left + "}{" + right + "}";
                 }
-                return left + operator + right;
+                return "{" + left + "}" + operator + "{" + right + "}";
             } else if (((Operators) token).args == 1) {
                 if (token == Operators.FACTORIAL)
                     return parseTokens() + "!";
