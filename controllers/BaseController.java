@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import main.Graph;
 import main.Main;
@@ -22,6 +23,14 @@ import java.util.ResourceBundle;
  * is an AnchorPane <br>
  */
 public class BaseController extends AnchorPane implements Initializable {
+
+    /**
+     * Menu items
+     */
+    @FXML
+    MenuItem undoMenu;
+    @FXML
+    MenuItem redoMenu;
 
     /**
      * lower menu
@@ -86,17 +95,24 @@ public class BaseController extends AnchorPane implements Initializable {
 //        System.out.println(Main.getGraph().getEquationArrayList());
     }
 
-    public void addManualPane(NormalEquation equation){
+    public void addManualPane(NormalEquation equation) {
         equationPaneContainer.setPrefWidth(leftPane.getWidth());
         EquationPaneController ep = new EquationPaneController(equation);
         equationPaneContainer.getChildren().add(ep);
         ep.getEquationTextField().requestFocus();
     }
 
+    public void addManualPane(int index, NormalEquation equation) {
+        equationPaneContainer.setPrefWidth(leftPane.getWidth());
+        EquationPaneController ep = new EquationPaneController(equation);
+        equationPaneContainer.getChildren().add(index, ep);
+        ep.getEquationTextField().requestFocus();
+    }
+
     @FXML
     public void integrate() {
         equationPaneContainer.setPrefWidth(leftPane.getWidth());
-        EquationPaneController ep = new EquationPaneController(NormalEquation.Type.INTEGRAL);
+        EquationPaneController ep = new EquationPaneController(NormalEquation.Type.INTEGRAL, false);
         equationPaneContainer.getChildren().add(ep);
         ep.getEquationTextField().requestFocus();
     }
@@ -104,34 +120,96 @@ public class BaseController extends AnchorPane implements Initializable {
     @FXML
     public void derivative() {
         equationPaneContainer.setPrefWidth(leftPane.getWidth());
-        EquationPaneController ep = new EquationPaneController(NormalEquation.Type.DERIVATIVE);
+        EquationPaneController ep = new EquationPaneController(NormalEquation.Type.DERIVATIVE, false);
         equationPaneContainer.getChildren().add(ep);
         ep.getEquationTextField().requestFocus();
     }
 
     @FXML
-    public void saveAsGraph(){
-        System.out.println("method invoked");
+    public void saveAsGraph() {
+//        System.out.println("method invoked");
         Main.save(Main.saveAs());
     }
 
     @FXML
-    public void saveGraph(){
-        if(Main.getFile()==null) saveAsGraph();
+    public void saveGraph() {
+        if (Main.getFile() == null) saveAsGraph();
         else Main.save();
     }
 
-    @FXML public void openGraph(){
+    @FXML
+    public void openGraph() {
         FileChooser fileChooser = new FileChooser();
         String extension = Graph.EXTENSION;
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Graph file", extension)
         );
-        if(Main.getFile()!=null)
+        if (Main.getFile() != null)
             fileChooser.setInitialDirectory(Main.getFile().getParentFile());
         fileChooser.setTitle("Open");
         File file = fileChooser.showOpenDialog(Main.getStage());
         Main.load(file);
+    }
+
+    @FXML
+    public void export() {
+
+    }
+
+    @FXML
+    public void undo() {
+        Action action = UndoStack.pop();
+        if (action == null) return;
+        RedoStack.push(action);
+        System.out.println();
+        switch (action.getType()) {
+            case ADD:
+                ((EquationPaneController) equationPaneContainer.getChildren().get(action.getIndex())).deleteManual();
+                break;
+            case CHANGE_TYPE:
+            case CHANGE_TEXT:
+            case CHANGE_POINT:
+            case CHANGE_LOWER:
+            case CHANGE_UPPER:
+                ((EquationPaneController) equationPaneContainer.getChildren().get(action.getIndex()))
+                        .editEquationManual((NormalEquation) action.getOldValue());
+                break;
+            case CHANGE_COLOR:
+                ((EquationPaneController) equationPaneContainer.getChildren().get(action.getIndex()))
+                        .setColorManual((Color) action.getOldValue());
+                break;
+            case DELETE:
+                addManualPane(action.getIndex(), (NormalEquation) action.getOldValue());
+                break;
+        }
+    }
+
+    @FXML
+    public void redo() {
+        Action action = RedoStack.pop();
+        if (action == null) return;
+        UndoStack.push(action);
+        System.out.println();
+        switch (action.getType()) {
+            case ADD:
+                addManualPane(action.getIndex(), (NormalEquation) action.getNewValue());
+                break;
+            case CHANGE_TYPE:
+            case CHANGE_TEXT:
+            case CHANGE_POINT:
+            case CHANGE_LOWER:
+            case CHANGE_UPPER:
+                ((EquationPaneController) equationPaneContainer.getChildren().get(action.getIndex()))
+                        .editEquationManual((NormalEquation) action.getNewValue());
+                break;
+            case CHANGE_COLOR:
+                ((EquationPaneController) equationPaneContainer.getChildren().get(action.getIndex()))
+                        .setColorManual((Color) action.getNewValue());
+                break;
+            case DELETE:
+                ((EquationPaneController) equationPaneContainer.getChildren().get(action.getIndex())).deleteManual();
+                break;
+        }
     }
 
     @Override
@@ -151,7 +229,7 @@ public class BaseController extends AnchorPane implements Initializable {
         return plot;
     }
 
-    public void setBaseTitle(String s){
+    public void setBaseTitle(String s) {
         baseTitle.setText(s);
     }
 
