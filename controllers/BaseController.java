@@ -40,6 +40,8 @@ public class BaseController extends AnchorPane implements Initializable {
     @FXML
     public Button integralButton;
     @FXML
+    public Button matrixButton;
+    @FXML
     private Label baseTitle;
 
     /**
