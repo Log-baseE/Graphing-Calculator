@@ -35,6 +35,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import main.Main;
@@ -46,6 +47,8 @@ public class MatrixPanelController extends AnchorPane implements Initializable{
 	 */
 	@FXML
 	private ToolBar toolbar;
+	@FXML
+	private HBox toolbarSpace;
 	@FXML
 	private TextField dimensionField;
 	@FXML
@@ -91,6 +94,11 @@ public class MatrixPanelController extends AnchorPane implements Initializable{
 	 * Height scale of window in proportion to dimension
 	 */
 	private final static double HEIGHT_SCALE = 50;
+	/**
+	 * Default width of toolbar
+	 */
+	private final static double DEFAULT_TOOLBAR_WIDTH = 265;
+	
 	
 	/**
 	 * Constructor with dimension
@@ -109,10 +117,14 @@ public class MatrixPanelController extends AnchorPane implements Initializable{
         this.dimension = dimension;
         dimensionField.setText(new Integer(dimension).toString());
         
-        this.parent.setHeight(DEFAULT_HEIGHT + HEIGHT_SCALE * dimension);
-        this.parent.setWidth(DEFAULT_WIDTH + WIDTH_SCALE * dimension);
-        this.toolbar.setMaxWidth(DEFAULT_WIDTH + WIDTH_SCALE * dimension);
-        this.toolbar.setMinWidth(DEFAULT_WIDTH + WIDTH_SCALE * dimension);
+        double newHeight = DEFAULT_HEIGHT + HEIGHT_SCALE * dimension;
+        double newWidth = DEFAULT_WIDTH + WIDTH_SCALE * dimension;
+        this.parent.setHeight(newHeight);
+        this.parent.setWidth(newWidth);
+        this.toolbar.setMaxWidth(newWidth);
+        this.toolbar.setMinWidth(newWidth);
+        this.toolbarSpace.setMaxWidth(newWidth - DEFAULT_TOOLBAR_WIDTH);
+        this.toolbarSpace.setMinWidth(newWidth - DEFAULT_TOOLBAR_WIDTH);
         
         for(int i = 0; i < dimension; ++i) {
         	for(int j = 0; j < dimension; ++j) {
@@ -199,6 +211,8 @@ public class MatrixPanelController extends AnchorPane implements Initializable{
 			imageView.setVisible(true);
 			solutionPane.getChildren().add(imageView);
 		}
+		
+		tabPane.getSelectionModel().selectNext();
 	}
 	
 	/**
