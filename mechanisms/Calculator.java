@@ -40,4 +40,24 @@ public class Calculator {
         Expression expr = new Expression(expression);
         return expr.calculate();
     }
+    public static double secondDerivative(Function f, double point){
+    	/*Argument x = new Argument("x");
+    	Expression expr = new Expression(expression, x);
+        return Calculus.derivativeNth(expr, 2, x, point, Calculus.GENERAL_DERIVATIVE, 1E-8, 20);*/
+    	double h = 0.001;
+    	return (f.calculate(point + h) + f.calculate(point - h) - 2*f.calculate(point)) / (h*h);
+    }
+    public static double[] linearSolve(double[][] aValues, double[][] bValues, int dimension) {
+    	DenseMatrix64F A = new DenseMatrix64F(aValues);
+    	DenseMatrix64F b = new DenseMatrix64F(bValues);
+    	DenseMatrix64F X = new DenseMatrix64F(dimension,1);
+    	LinearSolver<DenseMatrix64F> solver = LinearSolverFactory.general(dimension, dimension);
+		solver.setA(A);
+		solver.solve(b, X);
+    	double[] matrixSolution = new double[dimension];
+		for(int i=0; i<dimension; ++i) {
+			matrixSolution[i] = X.get(i, 0);
+		}
+		return matrixSolution;
+    }
 }
