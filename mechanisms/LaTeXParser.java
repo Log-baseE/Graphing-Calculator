@@ -40,8 +40,9 @@ public class LaTeXParser {
         }
     }
 
-    enum GreekLetters implements Token {
-        PI,
+    enum Constants implements Token {
+        PI, MIN_PI,
+        E, MIN_E
     }
 
     enum Others implements Token {
@@ -167,7 +168,10 @@ public class LaTeXParser {
         tokenMap.put(")", Others.RIGHT_PARENTHESIS);
         tokenMap.put(",", Others.COMMA);
 
-        tokenMap.put("pi", GreekLetters.PI);
+        tokenMap.put("pi", Constants.PI);
+        tokenMap.put("-pi", Constants.MIN_PI);
+        tokenMap.put("e", Constants.E);
+        tokenMap.put("-e", Constants.MIN_E);
     }
 
     private static Stack<Token> operatorStack = new Stack<>();
@@ -185,6 +189,7 @@ public class LaTeXParser {
         if (infix.isEmpty()) return;
         if (infix.contains(")(")) throw new LaTeXParserException("Add * between parentheses");
         List<String> tokens = tokenize(infix);
+//        System.out.println(tokens);
         for (int i = 0; i < tokens.size() - 1; ++i) {
             String s = tokens.get(i);
             Token token = tokenMap.get(s);
@@ -197,12 +202,16 @@ public class LaTeXParser {
                     if (s.length() == 1) {
                         if (Character.isLetter(s.charAt(0))) token = new Variable(s);
                         else throw new LaTeXParserException("Unexpected token: \"" + s + "\"");
-                    } else throw new LaTeXParserException("Unexpected token: \"" + s + "\"");
+                    } else {
+                        if(s.charAt(0)=='-' && s.length()==2 && Character.isLetter(s.charAt(1))) {
+                            token = new Variable(s);
+                        } else throw new LaTeXParserException("Unexpected token: \"" + s + "\"");
+                    }
                 }
             }
             String s2 = tokens.get(i + 1);
             Token nextToken = tokenMap.get(s2);
-            if (nextToken== null) {
+            if (nextToken == null) {
                 try {
                     //noinspection ResultOfMethodCallIgnored
                     Double.parseDouble(s2);
@@ -211,14 +220,18 @@ public class LaTeXParser {
                     if (s2.length() == 1) {
                         if (Character.isLetter(s2.charAt(0))) nextToken = new Variable(s2);
                         else throw new LaTeXParserException("Unexpected token: \"" + s2 + "\"");
-                    } else throw new LaTeXParserException("Unexpected token: \"" + s2 + "\"");
+                    } else {
+                        if(s2.charAt(0)=='-' && s2.length()==2 && Character.isLetter(s2.charAt(1))) {
+                            nextToken = new Variable(s2);
+                        } else throw new LaTeXParserException("Unexpected token: \"" + s2 + "\"");
+                    }
                 }
             }
-            if ((token instanceof Number || token instanceof Variable || token instanceof GreekLetters)
+            if ((token instanceof Number || token instanceof Variable || token instanceof Constants)
                     && nextToken == Others.LEFT_PARENTHESIS)
                 throw new LaTeXParserException("Add a '*' between an operand and a left parenthesis");
             if (token == Others.RIGHT_PARENTHESIS &&
-                    (nextToken instanceof Number || nextToken instanceof Variable || nextToken instanceof GreekLetters))
+                    (nextToken instanceof Number || nextToken instanceof Variable || nextToken instanceof Constants))
                 throw new LaTeXParserException("Add a '*' between a right parenthesis and an operand");
         }
         for (String s : tokens) {
@@ -232,9 +245,13 @@ public class LaTeXParser {
                     if (s.length() == 1) {
                         if (Character.isLetter(s.charAt(0))) postFix.push(new Variable(s));
                         else throw new LaTeXParserException("Unexpected token: \"" + s + "\"");
-                    } else throw new LaTeXParserException("Unexpected token: \"" + s + "\"");
+                    } else {
+                        if(s.charAt(0)=='-' && s.length()==2 && Character.isLetter(s.charAt(1))) {
+                            postFix.push(new Variable(s));
+                        } else throw new LaTeXParserException("Unexpected token: \"" + s + "\"");
+                    }
                 }
-            } else if (token instanceof GreekLetters) {
+            } else if (token instanceof Constants) {
                 postFix.push(token);
             } else if (token instanceof Functions) {
                 operatorStack.push(token);
@@ -303,8 +320,11 @@ public class LaTeXParser {
             return ((Number) token).number;
         } else if (token instanceof Variable) {
             return ((Variable) token).variable;
-        } else if (token instanceof GreekLetters) {
-            if (token == GreekLetters.PI) return "\\pi";
+        } else if (token instanceof Constants) {
+            if (token == Constants.PI) return "\\pi";
+            else if (token == Constants.MIN_PI) return "-\\pi";
+            else if (token == Constants.E) return "e";
+            else if (token == Constants.MIN_E) return "-e";
         } else if (token instanceof Operators) {
             if (((Operators) token).args == 2) {
                 String operator = "";
@@ -319,8 +339,10 @@ public class LaTeXParser {
                         right = parseTokens();
                         left = parseTokens();
                 }
-                if (left.isEmpty() || right.isEmpty())
+                if ((left.isEmpty() || right.isEmpty() ))
                     throw new LaTeXParserException("Insufficient arguments for operator: " + token);
+//                else if (right.isEmpty() && token == Operators.SUBTRACT)
+//                    throw new LaTeXParserException("Insufficient arguments for operator: " + token);
                 if (token == Operators.ADD) operator = "+";
                 else if (token == Operators.SUBTRACT) operator = "-";
                 else if (token == Operators.MULTIPLY) operator = "\\cdot ";
@@ -421,6 +443,8 @@ public class LaTeXParser {
     }
 
     private static List<String> tokenize(String s) {
-        return Arrays.asList(s.split("(?=[-+*/^#(),!])|(?<=[^-+*/^#,][-+*/^#,!])|(?<=[()])"));
+//        return Arrays.asList(s.split("(?=[-+*/^#(),!])|(?<=[^-+*/^#,!][-+*/^#,!])|(?<=[()])"));
+        return Arrays.asList(s.split("(?=[-+*/^#(),!])|(?<=[^-+*/^#,!(][-+*/^#,!])|(?<=[()])"));
+//        return Arrays.asList(s.split("(?<=[-+*/^#(),!])|(?=[-+*/^#(),!])"));
     }
 }
