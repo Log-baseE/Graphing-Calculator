@@ -17,8 +17,9 @@
         <items>
             <Label prefHeight="17.0" prefWidth="65.0" text="Dimensions:" />
             <TextField fx:id="dimensionField" nodeOrientation="LEFT_TO_RIGHT" onKeyReleased="#editDimension" prefHeight="25.0" prefWidth="54.0" />
-          <Button fx:id="calculateButton" mnemonicParsing="false" onAction="#calculate" text="Calculate" />
+            <HBox fx:id="toolbarSpace" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="34.0" />
             <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clear" text="Clear" />
+            <Button fx:id="calculateButton" mnemonicParsing="false" onAction="#calculate" text="Calculate" />
         </items>
          <opaqueInsets>
             <Insets />
