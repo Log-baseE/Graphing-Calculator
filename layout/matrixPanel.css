@@ -1,0 +1,8 @@
+#delete-button{
+    -fx-background-radius: 5 5 5 5;
+    -fx-background-color: rgb(87,59,68);
+}
+
+#tab-pane .tab-header-background {
+    -fx-background-color: rgb(125,125,140);
+}
