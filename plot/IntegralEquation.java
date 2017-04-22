@@ -11,44 +11,49 @@ import java.util.ArrayList;
  * Created by Nicky on 4/5/2017.
  */
 public class IntegralEquation extends NormalEquation {
-    private double lowerBound, upperBound;
+    private String lowerBound, upperBound;
     private Curve area;
 
     public IntegralEquation(String equation, double lowerBound, double upperBound, Color color) {
+        this(equation, String.valueOf(lowerBound), String.valueOf(upperBound), color);
+    }
+
+    public IntegralEquation(String equation, double lowerBound, double upperBound) {
+        this(equation, lowerBound, upperBound, new Color(0, 0, 0, 1));
+    }
+
+    public IntegralEquation(String equation, String lowerBound, String upperBound, Color color) {
         super(Type.INTEGRAL, equation, color);
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
     }
-    public IntegralEquation(String equation, double lowerBound, double upperBound){
-        this(equation, lowerBound, upperBound, new Color(0,0,0,1));
+
+    public IntegralEquation(String equation, String lowerBound, String upperBound) {
+        this(equation, lowerBound, upperBound, new Color(0, 0, 0, 1));
     }
-    public IntegralEquation(String equation, String lowerBound, String upperBound, Color color){
-        this(equation, new Expression(lowerBound).calculate(), new Expression(upperBound).calculate(), color);
-    }
-    public IntegralEquation(String equation, String lowerBound, String upperBound){
-        this(equation, lowerBound, upperBound, new Color(0,0,0,1));
-    }
+
     public IntegralEquation(String equation, Color color) {
         this(equation, 0, 1, color);
     }
+
     public IntegralEquation(String equation) {
-        this(equation, new Color(0,0,0,1));
+        this(equation, new Color(0, 0, 0, 1));
     }
 
-    public void setLowerBound(double lowerBound){
+    public void setLowerBound(double lowerBound) {
+        setLowerBound(String.valueOf(lowerBound));
+    }
+
+    public void setLowerBound(String lowerBound) {
         this.lowerBound = lowerBound;
     }
 
-    public void setLowerBound(String lowerBound){
-        setLowerBound(new Expression(lowerBound).calculate());
+    public void setUpperBound(double upperBound) {
+        setUpperBound(String.valueOf(upperBound));
     }
 
-    public void setUpperBound(double upperBound){
+    public void setUpperBound(String upperBound) {
         this.upperBound = upperBound;
-    }
-
-    public void setUpperBound(String upperBound){
-        setUpperBound(new Expression(upperBound).calculate());
     }
 
     @Override
@@ -61,11 +66,11 @@ public class IntegralEquation extends NormalEquation {
                 lineColor.toString();
     }
 
-    public double getLower(){
+    public String getLower() {
         return lowerBound;
     }
 
-    public double getUpper(){
+    public String getUpper() {
         return upperBound;
     }
 
@@ -73,10 +78,10 @@ public class IntegralEquation extends NormalEquation {
     private void drawArea(double from, double to,
                           double originX, double originY,
                           double spacingX, double spacingY,
-                          double unitX, double unitY){
+                          double unitX, double unitY) {
         AdaptiveSampling samples = new AdaptiveSampling(function, from, to);
         area = new Curve(this);
-        MoveTo moveTo = new MoveTo(from*spacingX/unitX+originX, originY);
+        MoveTo moveTo = new MoveTo(from * spacingX / unitX + originX, originY);
         area.getElements().add(moveTo);
         for (Coordinate coor : samples.getSamples()) {
             LineTo lineTo = new LineTo(
@@ -84,7 +89,7 @@ public class IntegralEquation extends NormalEquation {
                     originY - coor.getY() / unitY * spacingY);
             area.getElements().add(lineTo);
         }
-        LineTo lineTo = new LineTo(to*spacingX/unitX+originX, originY);
+        LineTo lineTo = new LineTo(to * spacingX / unitX + originX, originY);
         area.getElements().add(lineTo);
         area.setFill(new Color(
                 lineColor.getRed(),
@@ -98,33 +103,38 @@ public class IntegralEquation extends NormalEquation {
     public void draw(double from, double to,
                      double originX, double originY,
                      double spacingX, double spacingY,
-                     double unitX, double unitY){
+                     double unitX, double unitY) {
         super.draw(from, to, originX, originY, spacingX, spacingY, unitX, unitY);
         drawArea(
-                lowerBound, upperBound,
+                new Expression(lowerBound).calculate(), new Expression(upperBound).calculate(),
                 originX, originY, spacingX, spacingY,
                 unitX, unitY);
     }
 
     @Override
     public boolean equalsWithoutID(Object obj) {
-        if(!(obj instanceof IntegralEquation)) return false;
-        else{
+        if (!(obj instanceof IntegralEquation)) return false;
+        else {
             IntegralEquation otherIntegralEquation = (IntegralEquation) obj;
             return (otherIntegralEquation.getType() == getType()
                     && otherIntegralEquation.getFunction().equals(getFunction())
                     && otherIntegralEquation.getLineColor().equals(getLineColor())
-                    && otherIntegralEquation.getLower() == getLower()
-                    && otherIntegralEquation.getUpper() == getUpper()
+                    && otherIntegralEquation.getLower().equals(getLower())
+                    && otherIntegralEquation.getUpper().equals(getUpper())
             );
         }
     }
 
     @Override
-    public ArrayList<Curve> getCurves(){
+    public ArrayList<Curve> getCurves() {
         ArrayList<Curve> temp = new ArrayList<>();
         temp.add(curve);
         temp.add(area);
         return temp;
+    }
+
+    @Override
+    public IntegralEquation copy() {
+        return new IntegralEquation(function, lowerBound, upperBound, lineColor);
     }
 }

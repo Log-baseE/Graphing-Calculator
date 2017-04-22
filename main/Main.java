@@ -2,6 +2,8 @@ package main;
 
 import controllers.BaseController;
 import controllers.EquationPaneController;
+import controllers.RedoStack;
+import controllers.UndoStack;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -66,6 +68,8 @@ public class Main extends Application {
         graph = new Graph();
         baseController.addPlot();
         baseController.addEquation();
+        UndoStack.clear();
+        RedoStack.clear();
         file = null;
     }
 
@@ -105,6 +109,8 @@ public class Main extends Application {
             mainWindow.setTitle(fileName + " - [" + file.getAbsolutePath() + "] - Graphing Calculator");
             baseController.setBaseTitle(fileName);
             fileReader.close();
+            UndoStack.clear();
+            RedoStack.clear();
         } catch (FileNotFoundException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");

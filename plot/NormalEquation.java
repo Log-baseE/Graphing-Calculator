@@ -4,71 +4,93 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.StrokeLineJoin;
+import org.mariuszgromada.math.mxparser.Expression;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Nicky on 3/19/2017.
  */
-public class NormalEquation {
-    public enum Type{
+@SuppressWarnings({"WeakerAccess", "unused"})
+public class NormalEquation implements Serializable{
+    public enum Type {
         NORMAL,
         INTEGRAL,
         DERIVATIVE
     }
-    protected Type type;
-    protected String function;
-    protected Color lineColor;
 
-    protected Curve curve;
+    protected Type type;
+    String function;
+    Color lineColor;
+
+    Curve curve;
+    ArrayList<Point> listOfPoints = new ArrayList<>();
     protected int id;
 
-    public NormalEquation(Type type, String function, Color color){
+    public NormalEquation(Type type, String function, Color color) {
         this.type = type;
         this.function = function;
         lineColor = color;
     }
-    public NormalEquation(String function, Color color){
+
+    public NormalEquation(String function, Color color) {
         this(Type.NORMAL, function, color);
     }
-    public NormalEquation(String function){
+
+    public NormalEquation(String function) {
         this(function, Color.BLACK);
     }
 
-    /**mutators*/
-    public void setLineColor(Color color){
+    /**
+     * setter methods
+     */
+    public void setLineColor(Color color) {
         this.lineColor = color;
     }
+
     public void setFunction(String function) {
         this.function = function;
     }
+
     public void setType(Type type) {
         this.type = type;
     }
-    public void setID(int id){
+
+    public void setID(int id) {
         this.id = id;
     }
 
-    /**accessors*/
-    public String getFunction(){
+    /**
+     * getter methods
+     */
+    public String getFunction() {
         return function;
     }
-    public Color getLineColor(){
+
+    public Color getLineColor() {
         return lineColor;
     }
-    public Type getType(){
+
+    public Type getType() {
         return type;
     }
-    public int getID(){
+
+    public int getID() {
         return id;
     }
-    public Curve getCurve(){
+
+    public Curve getCurve() {
         return curve;
     }
-    public ArrayList<Curve> getCurves(){
+
+    public ArrayList<Curve> getCurves() {
         ArrayList<Curve> temp = new ArrayList<>();
         temp.add(curve);
         return temp;
+    }
+    public ArrayList<Point> getPoints(){
+        return listOfPoints;
     }
 
 
@@ -79,17 +101,21 @@ public class NormalEquation {
 
     @Override
     public boolean equals(Object obj) {
-        if(!(obj instanceof NormalEquation)) return false;
-        else{
-            NormalEquation otherNormalEquation = (NormalEquation)obj;
+        if (!(obj instanceof NormalEquation)) return false;
+        else {
+            NormalEquation otherNormalEquation = (NormalEquation) obj;
             return (otherNormalEquation.toString().equals(toString()));
         }
     }
 
-    public boolean equalsWithoutID(Object obj){
-        if(!(obj instanceof NormalEquation)) return false;
-        else{
-            NormalEquation otherNormalEquation = (NormalEquation)obj;
+    public NormalEquation copy(){
+        return new NormalEquation(function, lineColor);
+    }
+
+    public boolean equalsWithoutID(Object obj) {
+        if (!(obj instanceof NormalEquation)) return false;
+        else {
+            NormalEquation otherNormalEquation = (NormalEquation) obj;
             return (otherNormalEquation.getType() == getType()
                     && otherNormalEquation.getFunction().equals(getFunction())
                     && otherNormalEquation.getLineColor().equals(getLineColor())
@@ -100,7 +126,7 @@ public class NormalEquation {
     public void draw(double from, double to,
                      double originX, double originY,
                      double spacingX, double spacingY,
-                     double unitX, double unitY){
+                     double unitX, double unitY) {
         AdaptiveSampling samples = new AdaptiveSampling(function, from, to);
         boolean first = false;
         curve = new Curve(this);
@@ -119,4 +145,5 @@ public class NormalEquation {
             }
         }
     }
+
 }

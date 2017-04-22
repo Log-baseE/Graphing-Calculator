@@ -1,0 +1,139 @@
+package plot;
+
+import javafx.scene.paint.Color;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import mechanisms.Calculator;
+import org.mariuszgromada.math.mxparser.Function;
+
+import java.util.ArrayList;
+
+/**
+ * Created by Nicky on 4/5/2017.
+ */
+public class DerivativeCurve extends Plot.NormalEquation {
+    private Curve tangent;
+    private String tangentLine;
+    private String pointX;
+    public DerivativeCurve(DerivativeEquation function, int id) {
+        super(function);
+        this.pointX = String.valueOf(function.getPoint());
+        Function f = new Function("f(x) = " + function.getFunction());
+        double gradient = Calculator.derivative(function.getFunction(), pointX);
+        double coorX = Calculator.calculate(pointX);
+        double coorY = f.calculate(coorX);
+        tangentLine = gradient + "*(x - " + coorX + ") + " + coorY;
+    }
+    private void drawTangent(double from, double to, double spacingX, double spacingY, double originX, double originY){
+        AdaptiveSampling samples = new AdaptiveSampling(tangentLine, from, to);
+        boolean first = false;
+        Color tangentColor = new Color(
+                function.getLineColor().getRed(),
+                function.getLineColor().getGreen(),
+                function.getLineColor().getBlue(),
+                0.75
+        );
+        tangent = new Curve(new NormalEquation(tangentLine, tangentColor));
+        for (Coordinate coor : samples.getSamples()) {
+            if (!first) {
+                MoveTo moveTo = new MoveTo(coor.getX() * spacingX + originX, originY - coor.getY() * spacingY);
+                tangent.getElements().add(moveTo);
+                first = true;
+            } else {
+                LineTo lineTo = new LineTo(coor.getX() * spacingX + originX, originY - coor.getY() * spacingY);
+                tangent.getElements().add(lineTo);
+            }
+        }
+    }
+
+    @Override
+    public void draw(double from, double to, double spacingX, double spacingY, double originX, double originY){
+        super.draw(from, to, spacingX, spacingY, originX, originY);
+        drawTangent(from, to, spacingX, spacingY, originX, originY);
+    }
+
+    @Override
+    public ArrayList<Curve> getCurves(){
+        ArrayList<Curve> temp = new ArrayList<>();
+        temp.add(curve);
+        temp.add(tangent);
+        return temp;
+    }
+
+    public boolean equals(Object obj) {
+        if(!(obj instanceof DerivativeCurve)) return false;
+        else{
+            DerivativeCurve otherCurve = (DerivativeCurve) obj;
+            return otherCurve.getEquation().equals(function);
+        }
+    }
+}
+
+
+
+package plot;
+
+import javafx.scene.paint.Color;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+
+import java.util.ArrayList;
+
+/**
+ * Created by Nicky on 4/5/2017.
+ */
+public class IntegralCurve extends Plot.NormalEquation {
+    private Curve area;
+    private String lower;
+    private String upper;
+    public IntegralCurve(IntegralEquation function, int id) {
+        super(function);
+        this.lower = String.valueOf(function.getLower());
+        this.upper = String.valueOf(function.getUpper());
+    }
+
+    private void drawArea(double from, double to, double spacingX, double spacingY, double originX, double originY){
+        AdaptiveSampling samples = new AdaptiveSampling(function.getFunction(), from, to);
+        area = new Curve(getFunction());
+        MoveTo moveTo = new MoveTo(from*spacingX+originX, originY);
+        area.getElements().add(moveTo);
+        for (Coordinate coor : samples.getSamples()) {
+            LineTo lineTo = new LineTo(coor.getX() * spacingX + originX, originY - coor.getY() * spacingY);
+            area.getElements().add(lineTo);
+        }
+        LineTo lineTo = new LineTo(to*spacingX+originX, originY);
+        area.getElements().add(lineTo);
+        area.setFill(new Color(
+                function.getLineColor().getRed(),
+                function.getLineColor().getGreen(),
+                function.getLineColor().getBlue(),
+                0.5
+        ));
+    }
+
+    @Override
+    public void draw(double from, double to, double spacingX, double spacingY, double originX, double originY){
+        super.draw(from, to, spacingX, spacingY, originX, originY);
+        drawArea(
+                ((IntegralEquation)function).getLower(), ((IntegralEquation)function).getUpper(),
+                spacingX, spacingY,
+                originX, originY);
+    }
+
+    @Override
+    public ArrayList<Curve> getCurves(){
+        ArrayList<Curve> temp = new ArrayList<>();
+        temp.add(curve);
+        temp.add(area);
+        return temp;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof IntegralCurve)) return false;
+        else{
+            IntegralCurve otherCurve = (IntegralCurve) obj;
+            return otherCurve.getEquation().equals(function);
+        }
+    }
+}
