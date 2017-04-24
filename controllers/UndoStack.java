@@ -25,6 +25,7 @@ public class UndoStack {
         System.out.println("Undo pushed: "+action);
         undoStack.push(action);
         System.out.println("Undo stack after push: " + undoStack);
+        Main.setSave(false);
     }
 
     public static boolean empty() {

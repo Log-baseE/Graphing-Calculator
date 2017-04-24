@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import main.Main;
 
 import java.io.IOException;
 
@@ -32,6 +33,7 @@ public class DerivativeController extends VBox{
             alert.setHeaderText("Error loading file!");
             alert.setContentText("Error loading DerivativePoint.fxml");
             alert.showAndWait();
+            Main.getMainWindow().close();
         }
         point.setText("0");
     }

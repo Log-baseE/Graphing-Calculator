@@ -1,9 +1,13 @@
 package controllers;
 
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -12,8 +16,10 @@ import main.Main;
 import plot.NormalEquation;
 import plot.Plot;
 
+import javax.imageio.ImageIO;
 import java.io.*;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -78,6 +84,7 @@ public class BaseController extends AnchorPane implements Initializable {
             alert.setHeaderText("Error loading file!");
             alert.setContentText("Error loading BaseLayout.fxml");
             alert.showAndWait();
+            Main.getMainWindow().close();
         }
     }
 
@@ -97,14 +104,14 @@ public class BaseController extends AnchorPane implements Initializable {
 
     public void addManualPane(NormalEquation equation) {
         equationPaneContainer.setPrefWidth(leftPane.getWidth());
-        EquationPaneController ep = new EquationPaneController(equation);
+        EquationPaneController ep = new EquationPaneController(equation, true);
         equationPaneContainer.getChildren().add(ep);
         ep.getEquationTextField().requestFocus();
     }
 
     public void addManualPane(int index, NormalEquation equation) {
         equationPaneContainer.setPrefWidth(leftPane.getWidth());
-        EquationPaneController ep = new EquationPaneController(equation);
+        EquationPaneController ep = new EquationPaneController(equation, false);
         equationPaneContainer.getChildren().add(index, ep);
         ep.getEquationTextField().requestFocus();
     }
@@ -139,6 +146,24 @@ public class BaseController extends AnchorPane implements Initializable {
 
     @FXML
     public void openGraph() {
+        if (!UndoStack.empty()) {
+            String fileName;
+            if (Main.getFile() != null) fileName = Main.getFile().getName();
+            else fileName = "Untitled";
+            Alert alert = new Alert(
+                    Alert.AlertType.CONFIRMATION,
+                    "Do you want to save " + fileName + " before opening another file?",
+                    ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+            alert.setTitle("Save file?");
+            alert.setHeaderText(null);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.YES) {
+                saveGraph();
+            } else if (result.get() == ButtonType.CANCEL) {
+                alert.close();
+                return;
+            }
+        }
         FileChooser fileChooser = new FileChooser();
         String extension = Graph.EXTENSION;
         fileChooser.getExtensionFilters().addAll(
@@ -147,13 +172,42 @@ public class BaseController extends AnchorPane implements Initializable {
         if (Main.getFile() != null)
             fileChooser.setInitialDirectory(Main.getFile().getParentFile());
         fileChooser.setTitle("Open");
-        File file = fileChooser.showOpenDialog(Main.getStage());
+        File file = fileChooser.showOpenDialog(Main.getMainWindow());
         Main.load(file);
     }
 
     @FXML
     public void export() {
+        WritableImage image = splitPane.snapshot(new SnapshotParameters(), null);
 
+        PixelReader reader = image.getPixelReader();
+
+        WritableImage newImage = new WritableImage(
+                reader,
+                (int) (leftPane.getWidth()), 0,
+                (int) (rightPane.getWidth()), (int) (leftPane.getHeight())
+        );
+
+        FileChooser fileChooser = new FileChooser();
+
+        fileChooser.setTitle("Save Snapshot");
+
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Portable Network Graphic file (*.png)", "*.png"),
+                new FileChooser.ExtensionFilter("JPEG file interchange format (*.jpg)", "*.jpg")
+        );
+        File savedFile = fileChooser.showSaveDialog(null);
+
+
+        try {
+            ImageIO.write(SwingFXUtils.fromFXImage(newImage, null), "png", savedFile);
+        } catch (IOException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error exporting image!");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
     }
 
     @FXML

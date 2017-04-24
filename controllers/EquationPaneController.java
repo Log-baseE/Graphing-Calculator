@@ -103,6 +103,7 @@ public class EquationPaneController extends AnchorPane implements Initializable 
             alert.setHeaderText("Error loading file!");
             alert.setContentText("Error loading EquationPane.fxml");
             alert.showAndWait();
+            Main.getMainWindow().close();
         }
         if(type == NormalEquation.Type.INTEGRAL){
             thisEquation = new IntegralEquation("", lineColorPicker.getValue());
@@ -120,8 +121,8 @@ public class EquationPaneController extends AnchorPane implements Initializable 
         choiceBox.setOnAction(e -> typeChange(false));
     }
 
-    public EquationPaneController(NormalEquation equation) {
-        this(equation.getType(), true);
+    public EquationPaneController(NormalEquation equation, boolean ignoreURStack) {
+        this(equation.getType(), ignoreURStack);
         lineColorPicker.setValue(equation.getLineColor());
         equationTextField.setText(equation.getFunction());
         if (equation.getType() == NormalEquation.Type.DERIVATIVE)

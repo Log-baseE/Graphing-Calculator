@@ -6,6 +6,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import main.Main;
 
 import java.io.IOException;
 
@@ -31,6 +32,7 @@ public class IntegralBoundsController extends GridPane{
             alert.setHeaderText("Error loading file!");
             alert.setContentText("Error loading IntegralBounds.fxml");
             alert.showAndWait();
+            Main.getMainWindow().close();
         }
         lower.setText("0");
         upper.setText("1");
