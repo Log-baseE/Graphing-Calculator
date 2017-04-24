@@ -8,13 +8,18 @@ import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import plot.NormalEquation;
 import plot.Plot;
 
 import java.io.*;
+import java.util.Optional;
+import java.util.Random;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Main extends Application {
@@ -22,6 +27,7 @@ public class Main extends Application {
     private static Graph graph;
     private static BaseController baseController;
     private static File file;
+    private static boolean saved = true;
 
     public static void main(String[] args) {
         launch(args);
@@ -38,10 +44,39 @@ public class Main extends Application {
         mainWindow.getIcons().add(new Image("resources/icon.png"));
         mainWindow.setTitle("Untitled Graph");
         mainWindow.setMaximized(true);
+        mainWindow.setOnCloseRequest(e -> {
+            e.consume();
+            if (!UndoStack.empty() && !saved) {
+                String fileName;
+                if (file != null) fileName = file.getName();
+                else fileName = "Untitled";
+                Alert alert = new Alert(
+                        Alert.AlertType.CONFIRMATION,
+                        "Do you want to save " + fileName + " before closing?",
+                        ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+                alert.setTitle("Save file?");
+                alert.setHeaderText(null);
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.YES) {
+                    baseController.saveGraph();
+                } else if (result.get() == ButtonType.NO) {
+                    mainWindow.close();
+                } else {
+                    alert.close();
+                }
+            } else {
+                mainWindow.close();
+            }
+        });
         mainWindow.show();
         graph = new Graph();
         baseController.addPlot();
-        baseController.addEquation();
+        Random random = new Random();
+        baseController.addManualPane(
+                new NormalEquation(
+                        "",
+                        new Color(random.nextDouble(), random.nextDouble(), random.nextDouble(), 1)
+                ));
     }
 
     public static BaseController getBaseController() {
@@ -52,11 +87,28 @@ public class Main extends Application {
         return graph;
     }
 
-    public static Stage getStage() {
-        return mainWindow;
-    }
-
     public static void newGraph() {
+        if (!UndoStack.empty() && !saved) {
+            String fileName;
+            if (file != null) fileName = file.getName();
+            else fileName = "Untitled";
+            Alert alert = new Alert(
+                    Alert.AlertType.CONFIRMATION,
+                    "Do you want to save " + fileName + " before closing?",
+                    ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+            alert.setTitle("Save file?");
+            alert.setHeaderText(null);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.YES) {
+                baseController.saveGraph();
+                if(file==null) return;
+            } else if(result.get() == ButtonType.NO){
+                alert.close();
+            } else {
+                alert.close();
+                return;
+            }
+        }
         baseController = new BaseController();
         mainWindow.setMinHeight(600);
         mainWindow.setMinWidth(1200);
@@ -71,6 +123,7 @@ public class Main extends Application {
         UndoStack.clear();
         RedoStack.clear();
         file = null;
+
     }
 
     public static void refresh() {
@@ -134,7 +187,8 @@ public class Main extends Application {
         );
         if (file != null) fileChooser.setInitialDirectory(file.getParentFile());
         fileChooser.setTitle("Save As");
-        File file = fileChooser.showSaveDialog(Main.getStage());
+        File file = fileChooser.showSaveDialog(mainWindow);
+        if(file!=null) saved = true;
         return file;
     }
 
@@ -152,6 +206,7 @@ public class Main extends Application {
             mainWindow.setTitle(fileName + " - [" + file.getAbsolutePath() + "] - Graphing Calculator");
             baseController.setBaseTitle(fileName);
             printWriter.close();
+            saved = true;
         } catch (IOException | NullPointerException ignored) {
         }
     }
@@ -162,5 +217,13 @@ public class Main extends Application {
 
     public static File getFile() {
         return file;
+    }
+
+    public static Stage getMainWindow() {
+        return mainWindow;
+    }
+
+    public static void setSave(boolean saved) {
+        Main.saved = saved;
     }
 }
