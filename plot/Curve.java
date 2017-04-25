@@ -2,10 +2,13 @@ package plot;
 
 import javafx.scene.shape.Path;
 
+import java.io.Serializable;
+
 /**
  * Created by Nicky on 4/5/2017.
  */
-public class Curve extends Path {
+@SuppressWarnings({"unused", "WeakerAccess"})
+public class Curve extends Path implements Serializable{
     private NormalEquation equation;
     private int id;
 

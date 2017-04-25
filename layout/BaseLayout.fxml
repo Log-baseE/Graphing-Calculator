@@ -60,7 +60,7 @@
                                           </accelerator>
                                       </MenuItem>
                                       <SeparatorMenuItem mnemonicParsing="false" />
-                              <MenuItem mnemonicParsing="false" text="Export">
+                              <MenuItem mnemonicParsing="false" onAction="#export" text="Export">
                                  <accelerator>
                                     <KeyCodeCombination alt="UP" code="E" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                                  </accelerator>
@@ -74,14 +74,14 @@
                                               <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
                                           </accelerator>
                                       </MenuItem>
-                                      <MenuItem mnemonicParsing="false" text="Undo">
+                                      <MenuItem fx:id="undoMenu" mnemonicParsing="false" onAction="#undo" text="Undo">
                                           <accelerator>
                                               <KeyCodeCombination alt="UP" code="Z" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                                           </accelerator>
                                       </MenuItem>
-                                      <MenuItem mnemonicParsing="false" text="Redo">
+                                      <MenuItem fx:id="redoMenu" mnemonicParsing="false" onAction="#redo" text="Redo">
                                           <accelerator>
-                                              <KeyCodeCombination alt="UP" code="Z" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
+                                              <KeyCodeCombination alt="UP" code="Y" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                                           </accelerator>
                                       </MenuItem>
                               <SeparatorMenuItem mnemonicParsing="false" />
