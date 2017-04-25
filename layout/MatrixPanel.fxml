@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<fx:root fx:id="mainPane" prefHeight="413.0" prefWidth="432.0" style="-fx-border-color: rgb(200,200,200); -fx-border-style: solid; -fx-border-width: 0 0 1 0;" stylesheets="@matrixPanel.css" type="AnchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ToolBar id="toolbar" fx:id="toolbar" maxHeight="-Infinity" minHeight="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="44.0">
+        <items>
+            <Label prefHeight="17.0" prefWidth="65.0" text="Dimensions:" />
+            <TextField fx:id="dimensionField" nodeOrientation="LEFT_TO_RIGHT" onKeyReleased="#editDimension" prefHeight="25.0" prefWidth="54.0" />
+            <HBox fx:id="toolbarSpace" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="34.0" />
+            <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clear" text="Clear" />
+            <Button fx:id="calculateButton" mnemonicParsing="false" onAction="#calculate" text="Calculate" />
+        </items>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </ToolBar>
+      <TabPane id="tab-pane" fx:id="tabPane" layoutX="7.0" layoutY="44.0" prefHeight="368.0" prefWidth="453.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="44.0">
+        <tabs>
+          <Tab text="Matrix Input">
+               <content>
+                  <AnchorPane>
+                     <children>
+                        <SplitPane fx:id="matrixPane" dividerPositions="0.7232558139534884" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <items>
+                              <ScrollPane prefViewportHeight="132.0" prefViewportWidth="326.0">
+                                 <content>
+                                    <AnchorPane fx:id="matrixLeftContainer">
+                                       <children>
+                                          <GridPane fx:id="matrixLeftGrid" AnchorPane.leftAnchor="35.0" AnchorPane.topAnchor="35.0">
+                                             <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" />
+                                             </columnConstraints>
+                                             <rowConstraints>
+                                                <RowConstraints minHeight="0.0" vgrow="SOMETIMES" />
+                                             </rowConstraints>
+                                             <children>
+                                              <AnchorPane />
+                                             </children>
+                                          </GridPane>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </ScrollPane>
+                              <ScrollPane maxWidth="-Infinity" minWidth="-Infinity" prefViewportHeight="132.0" prefViewportWidth="95.0" prefWidth="95.0" SplitPane.resizableWithParent="false">
+                                 <content>
+                                    <AnchorPane fx:id="matrixRightContainer">
+                                       <children>
+                                          <VBox fx:id="matrixRightGrid" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="35.0">
+                                             <children>
+                                              <AnchorPane />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </ScrollPane>
+                          </items>
+                        </SplitPane>
+                     </children>
+                  </AnchorPane>
+               </content>
+          </Tab>
+          <Tab text="Results">
+            <content>
+              <AnchorPane>
+                     <children>
+                        <ScrollPane prefHeight="338.0" prefViewportHeight="338.0" prefViewportWidth="453.0" prefWidth="453.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <content>
+                              <VBox fx:id="solutionPane" alignment="CENTER" />
+                           </content>
+                        </ScrollPane>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</fx:root>

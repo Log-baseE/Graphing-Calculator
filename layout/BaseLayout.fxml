@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.input.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
@@ -20,7 +29,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="800.0" prefHeight="1080.0" prefWidth="1920.0" stylesheets="@baseLayout.css" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="800.0" prefHeight="1080.0" prefWidth="1920.0" stylesheets="@baseLayout.css" type="AnchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <BorderPane fx:id="borderContainer" layoutX="139.0" layoutY="121.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <top>
@@ -102,7 +111,7 @@
                       </MenuBar>
                   <BorderPane style="-fx-background-color: rgb(42,56,90);">
                      <left>
-                        <HBox alignment="CENTER_LEFT" prefHeight="75.0" spacing="5.0" styleClass="lower-menu" stylesheets="@baseLayout.css" BorderPane.alignment="CENTER">
+                        <HBox alignment="CENTER_LEFT" prefHeight="75.0" prefWidth="419.0" spacing="5.0" styleClass="lower-menu" stylesheets="@baseLayout.css" BorderPane.alignment="CENTER">
                            <children>
                               <Button fx:id="newGraphButton" mnemonicParsing="false" onAction="#createNewGraph" prefHeight="50.0" text="+ New Graph" textFill="WHITE">
                                  <cursor>
@@ -141,6 +150,21 @@
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
+                                 <padding>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </padding>
+                              </Button>
+                              <Button fx:id="matrixButton" contentDisplay="CENTER" layoutX="225.0" layoutY="22.0" mnemonicParsing="false" onAction="#matrix" prefHeight="50.0" textAlignment="CENTER">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <graphic>
+                                    <ImageView fitHeight="30.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../resources/matrixButton.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
                                  <padding>
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                  </padding>

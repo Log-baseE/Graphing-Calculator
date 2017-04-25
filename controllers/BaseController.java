@@ -4,13 +4,21 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
+
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
+
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import main.Graph;
 import main.Main;
 import plot.NormalEquation;
@@ -46,6 +54,8 @@ public class BaseController extends AnchorPane implements Initializable {
     @FXML
     public Button integralButton;
     @FXML
+    public Button matrixButton;
+    @FXML
     private Label baseTitle;
 
     /**
@@ -66,7 +76,7 @@ public class BaseController extends AnchorPane implements Initializable {
      * Other components
      */
     private Plot plot;
-
+    private Stage matrixWindow = new Stage();
 
     /**
      * Constructor for BaseController class <br><br>
@@ -265,6 +275,45 @@ public class BaseController extends AnchorPane implements Initializable {
                 break;
         }
     }
+    
+    @FXML
+    public void matrix() {
+    	TextInputDialog dialog = new TextInputDialog();
+    	dialog.setTitle("Matrix Dimension Size");
+    	dialog.setContentText("Enter the dimensions for the matrix:");
+    	dialog.setHeaderText("");
+    	Optional<String> result = dialog.showAndWait();
+    	if(result.isPresent()){
+    		try {
+				Integer newDimension = Integer.parseInt(result.get());
+				if(newDimension > 10 || newDimension < 2) {
+					throw new NumberFormatException();
+				}
+	    	    //Stage matrixWindow = new Stage();
+				createMatrixWindow(newDimension);
+			} catch (NumberFormatException e) {
+				Alert alert = new Alert(AlertType.WARNING);
+				alert.setTitle("Dimension Limits");
+				alert.setHeaderText(null);
+				alert.setContentText("Matrix dimensions should be between 2 to 10.");
+				alert.showAndWait();
+			}
+    	}
+    }
+    
+    public void createMatrixWindow(int newDimension) {
+    	MatrixPanelController mp = new MatrixPanelController(newDimension);
+		Scene ms = new Scene(mp);
+        getMatrixWindow().setTitle("Linear System Solver");
+        getMatrixWindow().getIcons().add(new Image("resources/matrixIcon.png"));
+    	getMatrixWindow().setResizable(false);
+        getMatrixWindow().setScene(ms);
+        getMatrixWindow().show();
+    }
+    
+    public Stage getMatrixWindow() {
+		return matrixWindow;
+	}
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
